@@ -27,7 +27,7 @@ private int points = 0;
 Bitmap pic2;
     boolean fire = false;
 Rect firstFrame;
-
+private float lineX;
     public MyGame(Context context) {
 
         super(context);
@@ -45,7 +45,7 @@ Rect firstFrame;
 
       firstFrame = new Rect(0, 0, w, h);
 
-        enemy = new Sprite((float) (viewWidth + Math.random() * 500), 0, 0, 500, firstFrame, pic2);
+        enemy = new Sprite((float) (viewWidth + Math.random() * 500), 0, 0, 800, firstFrame, pic2);
 
 
        Timer t = new Timer();
@@ -53,16 +53,16 @@ Rect firstFrame;
     }
     protected void update () {
         enemy.update(timerInterval);
+
+
+
+
         if (enemy.getY() > viewHeight) {
           teleportEnemy();
-        points=-10;
+        points=points-10;
         }
 
-        if((enemy.getX()-(myShipX+pic.getWidth()/2)<50&&enemy.getX()-(myShipX+pic.getWidth()/2)>-50)||((myShipX+pic.getWidth()/2)-enemy.getX()<50&&(myShipX+pic.getWidth()/2)-enemy.getX()>-50))
-        {
-            teleportEnemy();
-            points=points+10;
-        }
+
     }
 
     @Override
@@ -87,10 +87,16 @@ Rect firstFrame;
             Paint line = new Paint();
             line.setStrokeWidth(23);
             line.setColor(Color.RED);
-            canvas.drawLine(myShipX+pic.getWidth()/2,
+            lineX = myShipX+pic.getWidth()/2;
+            canvas.drawLine(lineX,
                     myShipY,
-                    myShipX+pic.getWidth()/2,
+                    lineX,
                     0, line);
+            if(enemy.getX()-lineX<0&&enemy.getX()-lineX>-378)
+            {
+                teleportEnemy();
+                points=points+10;
+            }
 
         }
         invalidate();
@@ -100,7 +106,7 @@ Rect firstFrame;
 
 
     private void teleportEnemy () {
-        enemy.setX((float) (Math.random()));
+        enemy.setX((float) (Math.random()*600));
         enemy.setY((float) (0));
     }
 
@@ -111,9 +117,9 @@ Rect firstFrame;
         touchY = event.getY();
 
         if (touchX>viewWidth-pic.getWidth()) {
-            myShipX = viewWidth-pic.getWidth();
+            myShipX = viewWidth-pic.getWidth()-pic.getWidth()/2;
         } else {
-            myShipX = touchX;
+            myShipX = touchX-pic.getWidth()/2;
         }
         //myShipY = touchY;
         fire = true;
